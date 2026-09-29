@@ -102,8 +102,8 @@ function App() {
       <div className="content-grid">
         <section aria-labelledby="repos-title">
           <div className="section-heading">
-            <h2 id="repos-title">Repositories</h2>
-            <span>{isLoadingRepos ? 'Loading...' : `${repos.length} total`}</span>
+            <h2 id="repos-title">All Repositories</h2>
+            <span>{`${repos.length} total`}</span>
           </div>
 
           {repoError ? (
