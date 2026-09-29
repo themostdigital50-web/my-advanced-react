@@ -1,7 +1,17 @@
 import { useEffect, useState } from 'react';
 import './App.css';
+import { BsSearch } from 'react-icons/bs'
 
 function App() {
+    const [searchVal, setSearchVal] = useState("");
+    function handleSearchClick() {
+        if (searchVal === "") { setRepos(repos); return; }
+        const filterBySearch = repos.filter((item) => {
+            if (item.toLowerCase()
+                .includes(searchVal.toLowerCase())) { return item; }
+        })
+        setRepos(filterBySearch);
+    }
   const [repos, setRepos] = useState([]);
   const [languageTotals, setLanguageTotals] = useState({});
   const [isLoadingRepos, setIsLoadingRepos] = useState(true);
@@ -97,6 +107,9 @@ function App() {
         <p className="eyebrow">Developer Git Status</p>
         <h1>Hello, Dabes</h1>
         <p>Software Developer</p>
+        <input onChange={e => setSearchVal(e.target.value)}>
+                </input>
+                <BsSearch onClick={handleSearchClick} />
       </header>
 
       <div className="content-grid">
