@@ -94,7 +94,7 @@ function App() {
   return (
     <main className="App">
       <header className="page-header">
-        <p className="eyebrow">Developer portfolio</p>
+        <p className="eyebrow">Developer Git Status</p>
         <h1>Hello, Dabes</h1>
         <p>Software Developer</p>
       </header>
@@ -102,8 +102,8 @@ function App() {
       <div className="content-grid">
         <section aria-labelledby="repos-title">
           <div className="section-heading">
-            <h2 id="repos-title">Repositories</h2>
-            <span>{isLoadingRepos ? 'Loading...' : `${repos.length} total`}</span>
+            <h2 id="repos-title">All Repositories</h2>
+            <span>{`${repos.length} total`}</span>
           </div>
 
           {repoError ? (
