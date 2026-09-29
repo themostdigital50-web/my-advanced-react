@@ -94,7 +94,7 @@ function App() {
   return (
     <main className="App">
       <header className="page-header">
-        <p className="eyebrow">Developer portfolio</p>
+        <p className="eyebrow">Developer Git Status</p>
         <h1>Hello, Dabes</h1>
         <p>Software Developer</p>
       </header>
