@@ -1,23 +1,71 @@
 import { useEffect, useState } from 'react';
 import './App.css';
-import { BsSearch } from 'react-icons/bs'
+
 
 function App() {
-    const [searchVal, setSearchVal] = useState("");
-    function handleSearchClick() {
-        if (searchVal === "") { setRepos(repos); return; }
-        const filterBySearch = repos.filter((item) => {
-            if (item.toLowerCase()
-                .includes(searchVal.toLowerCase())) { return item; }
-        })
-        setRepos(filterBySearch);
-    }
+    
   const [repos, setRepos] = useState([]);
   const [languageTotals, setLanguageTotals] = useState({});
   const [isLoadingRepos, setIsLoadingRepos] = useState(true);
   const [isLoadingLanguages, setIsLoadingLanguages] = useState(false);
   const [repoError, setRepoError] = useState('');
   const [languageError, setLanguageError] = useState('');
+  const [get, setGet] = useState([]);
+
+  async function Get(){
+
+    let headersList = {
+     "Accept": "*/*"
+    }
+    let response = await fetch("http://localhost:3000/users/", { 
+      method: "GET",
+      headers: headersList
+    });
+    
+    let data = await response.text();
+    setGet(data);
+  }
+
+  async function Post(){
+    let headersList = {
+ "Accept": "*/*",
+ "Content-Type": "application/json"
+}
+
+let bodyContent = JSON.stringify({
+  "name": "dabes",
+  "email": "dabest@gmail.com",
+  "password": "dabest",
+  "age": 24
+});
+
+let response = await fetch("http://localhost:3000/users/", { 
+  method: "POST",
+  body: bodyContent,
+  headers: headersList
+});
+
+let data = await response.text();
+console.log(data);
+
+  }
+
+  async function Delete(){
+    let headersList = {
+ "Accept": "*/*"
+}
+
+let response = await fetch("http://localhost:3000/users/1", { 
+  method: "DELETE",
+  headers: headersList
+});
+
+let data = await response.text();
+console.log(data);
+
+  }
+
+
 
   useEffect(() => {
     let ignoreResult = false;
@@ -107,12 +155,8 @@ function App() {
         <p className="eyebrow">Developer Git Status</p>
         <h1>Hello, Dabes</h1>
         <p>Software Developer</p>
-        <input onChange={e => setSearchVal(e.target.value)}>
-                </input>
-                <BsSearch onClick={handleSearchClick} />
-      </header>
-
-      <div className="content-grid">
+      
+    </header><div className="content-grid">
         <section aria-labelledby="repos-title">
           <div className="section-heading">
             <h2 id="repos-title">All Repositories</h2>
@@ -166,5 +210,6 @@ function App() {
     </main>
   );
 }
+    
 
 export default App;
