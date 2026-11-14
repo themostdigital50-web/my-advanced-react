@@ -1,76 +1,21 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 
-
 function App() {
-    
   const [repos, setRepos] = useState([]);
   const [languageTotals, setLanguageTotals] = useState({});
   const [isLoadingRepos, setIsLoadingRepos] = useState(true);
   const [isLoadingLanguages, setIsLoadingLanguages] = useState(false);
   const [repoError, setRepoError] = useState('');
   const [languageError, setLanguageError] = useState('');
-  const [get, setGet] = useState([]);
-
-  async function Get(){
-
-    let headersList = {
-     "Accept": "*/*"
-    }
-    let response = await fetch("https://my-advanced-react.onrender.com", { 
-      method: "GET",
-      headers: headersList
-    });
-    
-    let data = await response.text();
-    setGet(data);
-  }
-
-  async function Post(){
-    let headersList = {
- "Accept": "*/*",
- "Content-Type": "application/json"
-}
-
-let bodyContent = JSON.stringify({
-  "name": "dabes",
-  "email": "dabest@gmail.com",
-  "password": "dabest",
-  "age": 24
-});
-
-let response = await fetch("http://localhost:3000/users/", { 
-  method: "POST",
-  body: bodyContent,
-  headers: headersList
-});
-
-let data = await response.text();
-console.log(data);
-
-  }
-
-  async function Delete(){
-    let headersList = {
- "Accept": "*/*"
-}
-
-let response = await fetch("http://localhost:3000/users/1", { 
-  method: "DELETE",
-  headers: headersList
-});
-
-let data = await response.text();
-console.log(data);
-
-  }
-
-
 
   useEffect(() => {
     let ignoreResult = false;
 
     async function loadRepos() {
+      setRepoError('');
+      setIsLoadingRepos(true);
+
       try {
         const response = await fetch(
           'https://api.github.com/users/themostdigital50-web/repos'
@@ -82,17 +27,24 @@ console.log(data);
 
         const data = await response.json();
         if (!Array.isArray(data)) {
-          throw new Error(data.message || 'GitHub returned an unexpected response');
+          throw new Error(data?.message || 'GitHub returned an unexpected response');
         }
 
         if (!ignoreResult) {
           setRepos(data);
           setIsLoadingLanguages(data.length > 0);
+          setLanguageTotals({});
+          setLanguageError('');
         }
       } catch (error) {
-        if (!ignoreResult) setRepoError(error.message);
+        if (!ignoreResult) {
+          setRepoError(error.message || 'Unable to load repositories.');
+          setIsLoadingLanguages(false);
+        }
       } finally {
-        if (!ignoreResult) setIsLoadingRepos(false);
+        if (!ignoreResult) {
+          setIsLoadingRepos(false);
+        }
       }
     }
 
@@ -104,10 +56,19 @@ console.log(data);
   }, []);
 
   useEffect(() => {
-    if (repos.length === 0) return;
+    if (repos.length === 0) {
+      setLanguageTotals({});
+      setLanguageError('');
+      setIsLoadingLanguages(false);
+      return undefined;
+    }
+
     let ignoreResult = false;
 
     async function loadLanguages() {
+      setLanguageError('');
+      setIsLoadingLanguages(true);
+
       const results = await Promise.all(
         repos.map(async (repo) => {
           const response = await fetch(
@@ -130,15 +91,21 @@ console.log(data);
         }
       }
 
-      if (!ignoreResult) setLanguageTotals(totals);
+      if (!ignoreResult) {
+        setLanguageTotals(totals);
+      }
     }
 
     loadLanguages()
       .catch((error) => {
-        if (!ignoreResult) setLanguageError(error.message);
+        if (!ignoreResult) {
+          setLanguageError(error.message || 'Unable to load languages.');
+        }
       })
       .finally(() => {
-        if (!ignoreResult) setIsLoadingLanguages(false);
+        if (!ignoreResult) {
+          setIsLoadingLanguages(false);
+        }
       });
 
     return () => {
@@ -149,14 +116,16 @@ console.log(data);
   const languages = Object.entries(languageTotals).sort(
     ([, firstBytes], [, secondBytes]) => secondBytes - firstBytes
   );
+
   return (
     <main className="App">
       <header className="page-header">
         <p className="eyebrow">Developer Git Status</p>
         <h1>Hello, Dabes</h1>
         <p>Software Developer</p>
-      
-    </header><div className="content-grid">
+      </header>
+
+      <div className="content-grid">
         <section aria-labelledby="repos-title">
           <div className="section-heading">
             <h2 id="repos-title">All Repositories</h2>
@@ -164,14 +133,18 @@ console.log(data);
           </div>
 
           {repoError ? (
-            <p className="message error" role="alert">Could not load repositories: {repoError}</p>
+            <p className="message error" role="alert">
+              Could not load repositories: {repoError}
+            </p>
           ) : isLoadingRepos ? (
             <p className="message">Loading repositories from GitHub...</p>
           ) : (
             <div className="repo-grid">
               {repos.map((repo) => (
                 <article className="repo-card" key={repo.id}>
-                  <p className="repo-language">{repo.language || 'Language not detected'}</p>
+                  <p className="repo-language">
+                    {repo.language || 'Language not detected'}
+                  </p>
                   <h3>{repo.name}</h3>
                   <p className="repo-description">
                     {repo.description || 'No description provided.'}
@@ -189,8 +162,11 @@ console.log(data);
           <div className="section-heading">
             <h2 id="languages-title">Languages used</h2>
           </div>
+
           {languageError ? (
-            <p className="message error" role="alert">Could not load languages: {languageError}</p>
+            <p className="message error" role="alert">
+              Could not load languages: {languageError}
+            </p>
           ) : isLoadingLanguages ? (
             <p className="message">Loading languages...</p>
           ) : languages.length === 0 ? (
@@ -210,6 +186,5 @@ console.log(data);
     </main>
   );
 }
-    
 
 export default App;
