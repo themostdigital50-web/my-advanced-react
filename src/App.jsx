@@ -17,7 +17,7 @@ function App() {
     let headersList = {
      "Accept": "*/*"
     }
-    let response = await fetch("http://localhost:3000/users/", { 
+    let response = await fetch("https://my-advanced-react.onrender.com", { 
       method: "GET",
       headers: headersList
     });
